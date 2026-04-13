@@ -784,6 +784,35 @@
     .obs-icon-btn { top: 14px; right: 16px; width: 40px; height: 40px; font-size: 18px; }
   }
 
+  .modal-format {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .format-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .format-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .format-btn.active[data-f="實體書"] { background: rgba(201,146,58,0.15); border-color: var(--accent); color: var(--accent2); }
+  .format-btn.active[data-f="電子書"] { background: rgba(106,173,224,0.12); border-color: #6aade0; color: #6aade0; }
+
+  .card-format {
+    font-size: 10px;
+    opacity: 0.7;
+    line-height: 1;
+  }
+
   .modal-actions {
     display: flex;
     gap: 10px;
@@ -986,6 +1015,10 @@
         <button class="obs-sync-btn" id="obs-sync-btn" onclick="syncToObsidian()">
           <span id="obs-sync-icon">🔮</span> <span id="obs-sync-label">同步到 Obsidian</span>
         </button>
+      </div>
+      <div class="modal-format" id="modal-format">
+        <button class="format-btn" data-f="實體書" onclick="setFormat(this)">📗 實體書</button>
+        <button class="format-btn" data-f="電子書" onclick="setFormat(this)">📱 電子書</button>
       </div>
       <div class="modal-actions" id="modal-actions">
         <button class="status-select-btn" data-s="待讀" onclick="setStatus(this)">📚 待讀</button>
@@ -1388,6 +1421,7 @@ function render() {
         <span class="type-tag">${b.type}</span>
         ${getRating(b.id) > 0 ? `<span class="card-stars">${[1,2,3,4,5].map(v => `<span class="card-star${v <= getRating(b.id) ? ' filled' : ''}">★</span>`).join('')}</span>` : `<span class="book-num">${b.id}</span>`}
         ${getNotes(b.id) ? `<span class="card-note-dot" title="有閱讀心得"></span>` : ''}
+        ${getFormat(b.id) ? `<span class="card-format" title="${getFormat(b.id)}">${getFormat(b.id) === '實體書' ? '📗' : '📱'}</span>` : ''}
       </div>
     `;
 
@@ -1447,6 +1481,8 @@ function openModal(b) {
 
   // Owner-only sections
   document.getElementById('modal-actions').style.display = isOwner ? '' : 'none';
+  document.getElementById('modal-format').style.display = isOwner ? '' : 'none';
+  if (isOwner) updateFormatBtns(getFormat(b.id));
 
   if (isOwner) {
     // Update date display
@@ -1502,6 +1538,31 @@ function setStatus(btn) {
 }
 
 // Notes
+function getFormat(id) {
+  const entry = statusMap[id];
+  if (!entry || typeof entry === 'string') return null;
+  return entry.format || null;
+}
+
+function setFormat(btn) {
+  if (!currentModal) return;
+  const f = btn.dataset.f;
+  const entry = statusMap[currentModal.id];
+  if (entry && typeof entry === 'object') {
+    // Toggle off if already active
+    entry.format = entry.format === f ? null : f;
+    storageSet(statusMap);
+  }
+  updateFormatBtns(getFormat(currentModal.id));
+  render();
+}
+
+function updateFormatBtns(format) {
+  document.querySelectorAll('.format-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.f === format);
+  });
+}
+
 function getNotes(id) {
   const entry = statusMap[id];
   if (!entry || typeof entry === 'string') return '';

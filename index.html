@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mia's 書庫 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #141210;
+    --bg2: #1e1a16;
+    --bg3: #2a2420;
+    --text: #f0e8dc;
+    --text-muted: #8a7a6a;
+    --accent: #c9923a;
+    --accent2: #e8b86d;
+    --accent-dim: rgba(201,146,58,0.15);
+    --border: rgba(201,146,58,0.2);
+    --card-bg: #1e1a16;
+    --card-hover: #252018;
+    --tag-bg: rgba(201,146,58,0.12);
+    --shadow: 0 8px 32px rgba(0,0,0,0.5);
+    --radius: 6px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    position: relative;
+    padding: 60px 48px 40px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(201,146,58,0.05) 0%, transparent 100%);
+    z-index: 1;
+  }
+
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .logo-area h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    letter-spacing: -1px;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .logo-area h1 em {
+    font-style: italic;
+    color: var(--accent2);
+  }
+
+  .logo-area p {
+    margin-top: 8px;
+    color: var(--text-muted);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .stats-bar {
+    display: flex;
+    gap: 32px;
+  }
+
+  .stat {
+    text-align: right;
+  }
+
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 300;
+    color: var(--accent2);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  /* ===== CONTROLS ===== */
+  .controls {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(20,18,16,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 48px;
+  }
+
+  .controls-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  /* Search */
+  .search-wrap {
+    position: relative;
+    flex: 0 0 260px;
+  }
+
+  .search-wrap svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    width: 14px;
+    height: 14px;
+  }
+
+  input[type="search"] {
+    width: 100%;
+    padding: 9px 12px 9px 36px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input[type="search"]:focus {
+    border-color: var(--accent);
+  }
+
+  input[type="search"]::placeholder { color: var(--text-muted); }
+
+  /* Filter tags */
+  .filter-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+
+  .filter-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .filter-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .filter-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #141210;
+    font-weight: 500;
+  }
+
+  /* Status filter */
+  .status-filter {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+  }
+
+  .status-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .status-btn[data-status="全部"] { color: var(--accent); border-color: rgba(201,146,58,0.3); }
+  .status-btn[data-status="待讀"] { color: var(--text-muted); }
+  .status-btn[data-status="閱讀中"] { color: #6aade0; border-color: rgba(106,173,224,0.3); }
+  .status-btn[data-status="已讀完"] { color: #6ac08a; border-color: rgba(106,192,138,0.3); }
+
+  .status-btn.active[data-status="全部"] { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .status-btn.active[data-status="待讀"] { background: var(--text-muted); color: var(--bg); border-color: var(--text-muted); }
+  .status-btn.active[data-status="閱讀中"] { background: #6aade0; color: var(--bg); border-color: #6aade0; }
+  .status-btn.active[data-status="已讀完"] { background: #6ac08a; color: var(--bg); border-color: #6ac08a; }
+
+  /* ===== RESULT COUNT ===== */
+  .result-info {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 48px 0;
+    color: var(--text-muted);
+    font-size: 12px;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .result-info span { color: var(--accent2); }
+
+  .sort-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text-muted);
+    font-size: 11px;
+    padding: 4px 12px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+  }
+  .sort-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .sort-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+
+  /* ===== GRID ===== */
+  .grid-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px 48px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+  }
+
+  /* ===== BOOK CARD ===== */
+  .book-card {
+    position: relative;
+    cursor: pointer;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.04);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    animation: fadeIn 0.4s ease both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .book-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.6), 0 0 0 1px var(--accent);
+    border-color: var(--accent);
+    z-index: 10;
+  }
+
+  .book-cover-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2/3;
+    overflow: hidden;
+    background: var(--bg3);
+  }
+
+  .book-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+
+  .book-card:hover .book-cover {
+    transform: scale(1.05);
+  }
+
+  /* Placeholder when no image */
+  .book-cover-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--bg3), var(--bg2));
+    text-align: center;
+  }
+
+  .placeholder-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--text-muted);
+    font-weight: 400;
+    word-break: break-all;
+  }
+
+  /* Overlay on hover */
+  .book-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(20,18,16,0.98) 0%, rgba(20,18,16,0.7) 50%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 12px;
+  }
+
+  .book-card:hover .book-overlay {
+    opacity: 1;
+  }
+
+  .overlay-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .overlay-author {
+    font-size: 11px;
+    color: var(--accent2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Status badge */
+  .status-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .book-card:hover .status-badge { opacity: 1; }
+
+  .status-badge.待讀 { background: rgba(138,122,106,0.8); color: #fff; }
+  .status-badge.閱讀中 { background: rgba(106,173,224,0.85); color: #fff; }
+  .status-badge.已讀完 { background: rgba(106,192,138,0.85); color: #fff; }
+
+  /* Type tag */
+  .book-type {
+    padding: 8px 10px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+  }
+
+  .type-tag {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    background: var(--tag-bg);
+    padding: 2px 7px;
+    border-radius: 3px;
+    white-space: nowrap;
+    border: 1px solid rgba(201,146,58,0.1);
+  }
+
+  .book-num {
+    font-size: 10px;
+    color: rgba(138,122,106,0.4);
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  /* ===== NO RESULTS ===== */
+  .no-results {
+    text-align: center;
+    padding: 80px 0;
+    color: var(--text-muted);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-style: italic;
+    display: none;
+    grid-column: 1 / -1;
+  }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0;
+    max-width: 540px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    transform: scale(0.95);
+    transition: transform 0.3s;
+  }
+
+  .modal-overlay.open .modal {
+    transform: scale(1);
+  }
+
+  .modal-cover-wrap {
+    width: 100%;
+    height: 280px;
+    overflow: hidden;
+    border-radius: 12px 12px 0 0;
+    position: relative;
+  }
+
+  .modal-cover-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  .modal-cover-gradient {
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    height: 60%;
+    background: linear-gradient(transparent, var(--bg2));
+  }
+
+  .modal-body {
+    padding: 24px 28px 28px;
+  }
+
+  .modal-type {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .modal-author {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  .modal-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .modal-dates > span { display: none; }
+  .modal-dates > span.visible { display: block; }
+
+  .modal-dates .date-label {
+    color: var(--accent);
+    font-weight: 500;
+    margin-right: 6px;
+  }
+
+  .modal-rating {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .modal-rating.visible { display: flex; }
+
+  .rating-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .stars {
+    display: flex;
+    gap: 2px;
+  }
+
+  .star {
+    font-size: 26px;
+    color: rgba(138,122,106,0.25);
+    cursor: pointer;
+    transition: color 0.15s, transform 0.1s;
+    line-height: 1;
+    user-select: none;
+  }
+
+  .star.filled { color: var(--accent2); }
+  .star.hover { color: var(--accent2); }
+
+  .card-stars {
+    display: flex;
+    gap: 1px;
+    font-size: 10px;
+    line-height: 1;
+  }
+
+  .card-star { color: rgba(138,122,106,0.25); }
+  .card-star.filled { color: var(--accent2); }
+
+  /* ===== NOTES ===== */
+  .modal-notes {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .modal-notes.visible { display: flex; }
+
+  .notes-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+
+  .notes-textarea {
+    width: 100%;
+    min-height: 100px;
+    max-height: 240px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 13px;
+    font-family: inherit;
+    line-height: 1.7;
+    padding: 12px 14px;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .notes-textarea::placeholder { color: rgba(138,122,106,0.4); }
+  .notes-textarea:focus { border-color: var(--accent); }
+
+  .notes-saved {
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0;
+    transition: opacity 0.3s;
+    text-align: right;
+  }
+  .notes-saved.show { opacity: 1; }
+
+  .card-note-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent2);
+    flex-shrink: 0;
+  }
+
+  /* ===== OBSIDIAN SYNC ===== */
+  .obs-sync-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 100%;
+    padding: 10px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(138,108,220,0.35);
+    background: rgba(138,108,220,0.08);
+    color: #a78fd8;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 16px;
+  }
+  .obs-sync-btn:hover { border-color: #a78fd8; background: rgba(138,108,220,0.15); }
+  .obs-sync-btn:disabled { opacity: 0.45; cursor: default; }
+  .obs-sync-btn.syncing { color: var(--text-muted); border-color: var(--border); background: none; }
+  .obs-sync-btn.success { border-color: #6ac08a; background: rgba(106,192,138,0.1); color: #6ac08a; }
+  .obs-sync-btn.error { border-color: #e07070; background: rgba(224,112,112,0.1); color: #e07070; }
+
+  /* Settings panel */
+  .obs-settings-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 300;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .obs-settings-overlay.open { display: flex; }
+
+  .obs-settings-panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    width: 480px;
+    max-width: 90vw;
+    box-shadow: var(--shadow);
+  }
+  .obs-settings-panel h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+  .obs-settings-panel p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+  .obs-settings-panel label {
+    display: block;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .obs-settings-panel input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'DM Sans', monospace;
+    padding: 10px 12px;
+    outline: none;
+    margin-bottom: 14px;
+    transition: border-color 0.2s;
+  }
+  .obs-settings-panel input:focus { border-color: #a78fd8; }
+  .obs-settings-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .obs-settings-save {
+    flex: 1;
+    padding: 10px;
+    border-radius: var(--radius);
+    border: none;
+    background: #a78fd8;
+    color: #141210;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .obs-settings-save:hover { background: #b9a3e3; }
+  .obs-settings-cancel {
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .obs-settings-cancel:hover { border-color: var(--text-muted); color: var(--text); }
+
+  .obs-icon-btn {
+    position: fixed;
+    top: 20px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: #a78fd8;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 100;
+  }
+  .obs-icon-btn:hover { border-color: #a78fd8; background: rgba(138,108,220,0.12); }
+  .obs-icon-btn.connected { border-color: #6ac08a; color: #6ac08a; }
+
+  @media (max-width: 768px) {
+    .obs-icon-btn { top: 14px; right: 16px; width: 40px; height: 40px; font-size: 18px; }
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .status-select-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .status-select-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .status-select-btn.active { background: var(--accent); border-color: var(--accent); color: #141210; font-weight: 500; }
+
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(20,18,16,0.7);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    transition: all 0.2s;
+    z-index: 10;
+  }
+
+  .modal-close:hover { background: var(--accent); border-color: var(--accent); color: #141210; }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    header { padding: 40px 20px 28px; }
+    .logo-area h1 { font-size: 36px; }
+    .controls { padding: 12px 20px; }
+    .grid-container { padding: 20px 20px 60px; }
+    .books-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 14px; }
+    .stats-bar { gap: 20px; }
+    .result-info { padding: 16px 20px 0; }
+    .status-filter { margin-left: 0; }
+  }
+
+  @media (max-width: 480px) {
+    .books-grid { grid-template-columns: repeat(3, 1fr); }
+    .controls { padding: 10px 16px; }
+    .controls-inner { gap: 10px; }
+    .search-wrap { flex: 0 0 100%; }
+    .filter-group { gap: 4px; }
+    .filter-btn { padding: 5px 10px; font-size: 11px; }
+    .status-btn { padding: 5px 10px; font-size: 11px; }
+    .header-inner { flex-direction: column; align-items: flex-start; }
+    .stats-bar { gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo-area">
+      <h1>Mia's <em>書庫</em></h1>
+      <p>2026 閱讀計畫</p>
+    </div>
+    <div class="stats-bar">
+      <div class="stat">
+        <div class="stat-num" id="total-count">231</div>
+        <div class="stat-label">總計</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="reading-count">0</div>
+        <div class="stat-label">閱讀中</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="done-count">0</div>
+        <div class="stat-label">已讀完</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="controls-inner">
+    <!-- Search -->
+    <div class="search-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <input type="search" id="search-input" placeholder="搜尋書名或作者…">
+    </div>
+
+    <!-- Category filter -->
+    <div class="filter-group">
+      <span class="filter-label">類型</span>
+      <button class="filter-btn active" data-cat="全部">全部</button>
+      <button class="filter-btn" data-cat="自我成長">自我成長</button>
+      <button class="filter-btn" data-cat="效率">效率</button>
+      <button class="filter-btn" data-cat="商業">商業</button>
+      <button class="filter-btn" data-cat="溝通">溝通</button>
+      <button class="filter-btn" data-cat="心理">心理</button>
+      <button class="filter-btn" data-cat="財務">財務</button>
+      <button class="filter-btn" data-cat="健康">健康</button>
+      <button class="filter-btn" data-cat="學習">學習</button>
+      <button class="filter-btn" data-cat="設計">設計</button>
+      <button class="filter-btn" data-cat="其他">其他</button>
+    </div>
+
+    <!-- Status filter -->
+    <div class="status-filter">
+      <button class="status-btn active" data-status="全部">全部</button>
+      <button class="status-btn" data-status="待讀">待讀</button>
+      <button class="status-btn" data-status="閱讀中">閱讀中</button>
+      <button class="status-btn" data-status="已讀完">已讀完</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT INFO -->
+<div class="result-info" id="result-info">
+  <div>顯示 <span id="showing-count">231</span> 本</div>
+  <button class="sort-btn" id="sort-btn" onclick="toggleSort()">↕ 原始順序</button>
+</div>
+
+<!-- GRID -->
+<div class="grid-container">
+  <div class="books-grid" id="books-grid"></div>
+</div>
+
+<!-- OBSIDIAN SETTINGS PANEL -->
+<div class="obs-settings-overlay" id="obs-settings-overlay" onclick="closeObsSettings(event)">
+  <div class="obs-settings-panel">
+    <h3>🔮 Obsidian 串接設定</h3>
+    <p>需先在 Obsidian 安裝社群外掛 <strong>Local REST API</strong>，啟用後將 API Key 貼入下方。<br>外掛預設執行於 port 27123。</p>
+    <label>API KEY</label>
+    <input type="password" id="obs-api-key-input" placeholder="貼上 Local REST API 的 API Key…" autocomplete="off">
+    <label>筆記儲存路徑（Vault 內相對路徑）</label>
+    <input type="text" id="obs-notes-path-input" placeholder="例如：Books/心得">
+    <div class="obs-settings-row">
+      <button class="obs-settings-save" onclick="saveObsSettings()">儲存設定</button>
+      <button class="obs-settings-cancel" onclick="closeObsSettingsBtn()">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- OBS SETTINGS ICON -->
+<button class="obs-icon-btn" id="obs-icon-btn" onclick="openObsSettings()" title="Obsidian 串接設定" style="display:none">🔮</button>
+
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModalBtn()">×</button>
+    <div class="modal-cover-wrap">
+      <img id="modal-img" src="" alt="">
+      <div class="modal-cover-gradient"></div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-type" id="modal-type"></div>
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-author" id="modal-author"></div>
+      <div class="modal-dates" id="modal-dates">
+        <span id="modal-started"><span class="date-label">開始閱讀</span><span id="modal-started-val"></span></span>
+        <span id="modal-finished"><span class="date-label">讀完時間</span><span id="modal-finished-val"></span></span>
+      </div>
+      <div class="modal-rating" id="modal-rating">
+        <span class="rating-label">我的評分</span>
+        <div class="stars" id="modal-stars">
+          <span class="star" data-v="1">★</span>
+          <span class="star" data-v="2">★</span>
+          <span class="star" data-v="3">★</span>
+          <span class="star" data-v="4">★</span>
+          <span class="star" data-v="5">★</span>
+        </div>
+      </div>
+      <div class="modal-notes" id="modal-notes">
+        <div class="notes-label">閱讀心得</div>
+        <textarea class="notes-textarea" id="notes-textarea" placeholder="寫下你的心得、金句或讀後感想…"></textarea>
+        <div class="notes-saved" id="notes-saved">已儲存 ✓</div>
+        <button class="obs-sync-btn" id="obs-sync-btn" onclick="syncToObsidian()">
+          <span id="obs-sync-icon">🔮</span> <span id="obs-sync-label">同步到 Obsidian</span>
+        </button>
+      </div>
+      <div class="modal-actions" id="modal-actions">
+        <button class="status-select-btn" data-s="待讀" onclick="setStatus(this)">📚 待讀</button>
+        <button class="status-select-btn" data-s="閱讀中" onclick="setStatus(this)">📖 閱讀中</button>
+        <button class="status-select-btn" data-s="已讀完" onclick="setStatus(this)">✅ 已讀完</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const books = [
+  {id:1,title:"原子習慣：細微改變帶來巨大成就的實證法則",short:"原子習慣",author:"詹姆斯‧克利爾",type:"自我成長",cover:"原子習慣.jpg"},
+  {id:2,title:"子彈思考整理術",short:"子彈思考整理術",author:"瑞德．卡洛",type:"效率",cover:"子彈思考整理術.jpg"},
+  {id:3,title:"大器可以晚成",short:"大器可以晚成",author:"里奇·卡爾加德",type:"自我成長",cover:"大器可以晚成.jpg"},
+  {id:4,title:"一人公司：為什麼小而美是未來企業發展的趨勢",short:"一人公司",author:"保羅·賈維斯",type:"商業",cover:"一人公司.jpg"},
+  {id:5,title:"一人公司：起步的思維與挑戰",short:"一人公司（起步）",author:"保羅·賈維斯",type:"商業",cover:"一人公司（起步）.jpg"},
+  {id:6,title:"學得更好",short:"學得更好",author:"烏利希·鮑澤",type:"學習",cover:"學得更好.jpg"},
+  {id:7,title:"先問，為什麼？",short:"先問，為什麼？",author:"賽門·西奈克",type:"自我成長",cover:"先問，為什麼？.jpg"},
+  {id:8,title:"找到你的為什麼",short:"找到你的為什麼",author:"賽門·西奈克",type:"自我成長",cover:"找到你的為什麼.jpg"},
+  {id:9,title:"內在原力",short:"內在原力",author:"愛瑞克",type:"自我成長",cover:"內在原力.jpg"},
+  {id:10,title:"灰階思考",short:"灰階思考",author:"謝孟恭",type:"自我成長",cover:"灰階思考.jpg"},
+  {id:11,title:"安靜是種超能力",short:"安靜是種超能力",author:"張瀞仁",type:"自我成長",cover:"安靜是種超能力.jpg"},
+  {id:12,title:"反脆弱",short:"反脆弱",author:"納西姆·塔雷伯",type:"自我成長",cover:"反脆弱.jpg"},
+  {id:13,title:"彈性習慣",short:"彈性習慣",author:"史蒂芬·蓋斯",type:"自我成長",cover:"彈性習慣.jpg"},
+  {id:14,title:"設計你的小習慣",short:"設計你的小習慣",author:"BJ·福格",type:"自我成長",cover:"設計你的小習慣.jpg"},
+  {id:15,title:"僧人心態",short:"僧人心態",author:"傑·謝帝",type:"自我成長",cover:"僧人心態.jpg"},
+  {id:16,title:"黑馬思維",short:"黑馬思維",author:"陶德·羅斯",type:"自我成長",cover:"黑馬思維.jpg"},
+  {id:17,title:"一流的人如何保持顛峰",short:"一流的人如何保持顛峰",author:"布萊德·史托伯格",type:"自我成長",cover:"一流的人如何保持顛峰.jpg"},
+  {id:18,title:"選3哲學",short:"選3哲學",author:"蘭迪·祖克柏",type:"自我成長",cover:"選3哲學.jpg"},
+  {id:19,title:"人生順利的簡單法則",short:"人生順利的簡單法則",author:"凱利·麥高尼格爾",type:"自我成長",cover:"人生順利的簡單法則.jpg"},
+  {id:20,title:"驅動自己，也激勵別人",short:"驅動自己，也激勵別人",author:"",type:"自我成長",cover:"驅動自己，也激勵別人.jpg"},
+  {id:21,title:"你怎麼過今天，就怎麼過今生",short:"你怎麼過今天，就怎麼過今生",author:"詹姆斯·沃曼",type:"自我成長",cover:"你怎麼過今天，就怎麼過今生.jpg"},
+  {id:22,title:"在不完美的生活裡，找到完整的自己",short:"在不完美的生活裡，找到完整的自己",author:"艾爾文",type:"自我成長",cover:"在不完美的生活裡，找到完整的自己.jpg"},
+  {id:23,title:"理想生活的起點",short:"理想生活的起點",author:"葛瑞琴·魯賓",type:"自我成長",cover:"理想生活的起點.jpg"},
+  {id:24,title:"真確",short:"真確",author:"漢斯·羅斯林",type:"自我成長",cover:"真確.jpg"},
+  {id:25,title:"東大超人氣的人生思考課",short:"東大超人氣的人生思考課",author:"",type:"自我成長",cover:"東大超人氣的人生思考課.jpg"},
+  {id:26,title:"自學力就是你的超能力",short:"自學力就是你的超能力",author:"",type:"學習",cover:"自學力就是你的超能力.jpg"},
+  {id:27,title:"最高學習法",short:"最高學習法",author:"樺澤紫苑",type:"學習",cover:"最高學習法.jpg"},
+  {id:28,title:"最高學以致用法",short:"最高學以致用法",author:"樺澤紫苑",type:"學習",cover:"最高學以致用法.jpg"},
+  {id:29,title:"超速學習",short:"超速學習",author:"史考特·楊",type:"學習",cover:"超速學習.jpg"},
+  {id:30,title:"刻意練習",short:"刻意練習",author:"",type:"學習",cover:"刻意練習.jpg"},
+  {id:31,title:"腦力全開",short:"腦力全開",author:"吉姆·奎克",type:"學習",cover:"腦力全開.jpg"},
+  {id:32,title:"大腦整理習慣",short:"大腦整理習慣",author:"",type:"學習",cover:"大腦整理習慣.jpg"},
+  {id:33,title:"大腦這樣記憶，什麼都學得會",short:"大腦這樣記憶，什麼都學得會",author:"喬舒亞·佛爾",type:"學習",cover:"大腦這樣記憶，什麼都學得會.jpg"},
+  {id:34,title:"讀懂一本書",short:"讀懂一本書",author:"樊登",type:"學習",cover:"讀懂一本書.jpg"},
+  {id:35,title:"極度專注力",short:"極度專注力",author:"克里斯·貝利",type:"效率",cover:"極度專注力.jpg"},
+  {id:36,title:"專注力協定",short:"專注力協定",author:"尼爾·艾歐",type:"效率",cover:"專注力協定.jpg"},
+  {id:37,title:"高產出的本事",short:"高產出的本事",author:"劉奕酉",type:"效率",cover:"高產出的本事.jpg"},
+  {id:38,title:"簡簡單單告別推拖拉",short:"簡簡單單告別推拖拉",author:"安田正",type:"效率",cover:"簡簡單單告別推拖拉.jpg"},
+  {id:39,title:"停止拖延的情緒行為動力學",short:"停止拖延的情緒行為動力學",author:"彼得·霍林斯",type:"效率",cover:"停止拖延的情緒行為動力學.jpg"},
+  {id:40,title:"時間管理的30道難題",short:"時間管理的30道難題",author:"電腦玩物站長 Esor",type:"效率",cover:"時間管理的30道難題.jpg"},
+  {id:41,title:"一小時的力量",short:"一小時的力量",author:"艾德里安·赫伯特",type:"效率",cover:"一小時的力量.jpg"},
+  {id:42,title:"一流自雇者的時間管理術",short:"一流自雇者的時間管理術",author:"",type:"效率",cover:"一流自雇者的時間管理術.jpg"},
+  {id:43,title:"怦然心動的工作整理魔法",short:"怦然心動的工作整理魔法",author:"近藤麻理惠",type:"效率",cover:"怦然心動的工作整理魔法.jpg"},
+  {id:44,title:"間歇高效率的番茄工作法",short:"間歇高效率的番茄工作法",author:"法蘭西斯科·西里洛",type:"效率",cover:"間歇高效率的番茄工作法.jpg"},
+  {id:45,title:"玩提案",short:"玩提案",author:"劉奕酉",type:"效率",cover:"玩提案.jpg"},
+  {id:46,title:"暢玩一人公司",short:"暢玩一人公司",author:"于為暢",type:"商業",cover:"暢玩一人公司.jpg"},
+  {id:47,title:"一人創業",short:"一人創業",author:"坂本憲彥",type:"商業",cover:"一人創業.jpg"},
+  {id:48,title:"一人公司的致富思維",short:"一人公司的致富思維",author:"好葉",type:"商業",cover:"一人公司的致富思維.jpg"},
+  {id:49,title:"SOLO一個人工作聖經",short:"SOLO一個人工作聖經",author:"麗貝卡·希爾",type:"商業",cover:"SOLO一個人工作聖經.jpg"},
+  {id:50,title:"離開公司，我過得還不錯",short:"離開公司，我過得還不錯",author:"鄭均祥",type:"商業",cover:"離開公司，我過得還不錯.jpg"},
+  {id:51,title:"新創公司的100件大小事",short:"新創公司的100件大小事",author:"",type:"商業",cover:"新創公司的100件大小事.jpg"},
+  {id:52,title:"新創x品牌",short:"新創x品牌",author:"劉宥彤",type:"商業",cover:"新創x品牌.jpg"},
+  {id:53,title:"個人品牌",short:"個人品牌",author:"何則文",type:"商業",cover:"個人品牌.jpg"},
+  {id:54,title:"行銷故事",short:"行銷故事",author:"李洛克",type:"商業",cover:"行銷故事.jpg"},
+  {id:55,title:"超業攻略",short:"超業攻略",author:"解世博",type:"商業",cover:"超業攻略.jpg"},
+  {id:56,title:"疫後大未來",short:"疫後大未來",author:"史考特·蓋洛威",type:"商業",cover:"疫後大未來.jpg"},
+  {id:57,title:"超級思維",short:"超級思維",author:"加布里埃·溫伯格",type:"商業",cover:"超級思維.jpg"},
+  {id:58,title:"三步決斷聖經",short:"三步決斷聖經",author:"",type:"商業",cover:"三步決斷聖經.jpg"},
+  {id:59,title:"BCG問題解決力",short:"BCG問題解決力",author:"",type:"商業",cover:"BCG問題解決力.jpg"},
+  {id:60,title:"商業獲利思維課",short:"商業獲利思維課",author:"蔡知宴",type:"商業",cover:"商業獲利思維課.jpg"},
+  {id:61,title:"小規模是趨勢",short:"小規模是趨勢",author:"赫曼特·塔尼賈",type:"商業",cover:"小規模是趨勢.jpg"},
+  {id:62,title:"從1到1+",short:"從1到1+",author:"尼洛弗·默坎特",type:"商業",cover:"從1到1+.jpg"},
+  {id:63,title:"斜槓青年",short:"斜槓青年",author:"蘇珊·閻",type:"商業",cover:"斜槓青年.jpg"},
+  {id:64,title:"斜槓青年實踐版",short:"斜槓青年實踐版",author:"蘇珊·閻",type:"商業",cover:"斜槓青年實踐版.jpg"},
+  {id:65,title:"斜槓的50道難題",short:"斜槓的50道難題",author:"",type:"商業",cover:"斜槓的50道難題.jpg"},
+  {id:66,title:"大聲工作法",short:"大聲工作法",author:"約翰·史戴普",type:"商業",cover:"大聲工作法.jpg"},
+  {id:67,title:"懂權力，在每個角色上發光",short:"懂權力，在每個角色上發光",author:"",type:"商業",cover:"懂權力，在每個角色上發光.jpg"},
+  {id:68,title:"最強經營企劃書",short:"最強經營企劃書",author:"小山昇",type:"商業",cover:"最強經營企劃書.jpg"},
+  {id:69,title:"最強經營企劃書（實踐版）",short:"最強經營企劃書（實踐版）",author:"小山昇",type:"商業",cover:"最強經營企劃書（實踐版）.jpg"},
+  {id:70,title:"「懂事」總經理的30個思考",short:"「懂事」總經理的30個思考",author:"謝瑞慈",type:"商業",cover:"「懂事」總經理的30個思考.jpg"},
+  {id:71,title:"高績效人士都在做的8件事",short:"高績效人士都在做的8件事",author:"馬克·艾爾頓",type:"商業",cover:"高績效人士都在做的8件事.jpg"},
+  {id:72,title:"高效領導者的工作好習慣",short:"高效領導者的工作好習慣",author:"吉田幸弘",type:"商業",cover:"高效領導者的工作好習慣.jpg"},
+  {id:73,title:"工作就是在打怪",short:"工作就是在打怪",author:"公關溫拿",type:"商業",cover:"工作就是在打怪.jpg"},
+  {id:74,title:"人脈變現",short:"人脈變現",author:"",type:"商業",cover:"人脈變現.jpg"},
+  {id:75,title:"不是我人脈廣，只是我對人好",short:"不是我人脈廣，只是我對人好",author:"吳家德",type:"溝通",cover:"不是我人脈廣，只是我對人好.jpg"},
+  {id:76,title:"我想跟你好好說話",short:"我想跟你好好說話",author:"賴佩霞",type:"溝通",cover:"我想跟你好好說話.jpg"},
+  {id:77,title:"零噪音",short:"零噪音",author:"約瑟夫·麥考馬克",type:"溝通",cover:"零噪音.jpg"},
+  {id:78,title:"MIT最打動人心的溝通課",short:"MIT最打動人心的溝通課",author:"艾德·夏恩",type:"溝通",cover:"MIT最打動人心的溝通課.jpg"},
+  {id:79,title:"聽懂暗示，跟誰都能聊不停",short:"聽懂暗示，跟誰都能聊不停",author:"平木典子",type:"溝通",cover:"聽懂暗示，跟誰都能聊不停.jpg"},
+  {id:80,title:"情緒寄生",short:"情緒寄生",author:"許皓宜",type:"心理",cover:"情緒寄生.jpg"},
+  {id:81,title:"情緒治療",short:"情緒治療",author:"周志建",type:"心理",cover:"情緒治療.jpg"},
+  {id:82,title:"情緒陰影",short:"情緒陰影",author:"",type:"心理",cover:"情緒陰影.jpg"},
+  {id:83,title:"高敏感是種天賦",short:"高敏感是種天賦",author:"伊麗絲·桑德",type:"心理",cover:"高敏感是種天賦.jpg"},
+  {id:84,title:"高敏人的職場放鬆課",short:"高敏人的職場放鬆課",author:"",type:"心理",cover:"高敏人的職場放鬆課.jpg"},
+  {id:85,title:"給內心總是很累的你",short:"給內心總是很累的你",author:"馬克·弗里曼",type:"心理",cover:"給內心總是很累的你.jpg"},
+  {id:86,title:"也許你該找人聊聊",short:"也許你該找人聊聊",author:"洛蕊·葛利布",type:"心理",cover:"也許你該找人聊聊.jpg"},
+  {id:87,title:"憂鬱症自救手冊",short:"憂鬱症自救手冊",author:"",type:"心理",cover:"憂鬱症自救手冊.jpg"},
+  {id:88,title:"正午惡魔",short:"正午惡魔",author:"安德魯·所羅門",type:"心理",cover:"正午惡魔.jpg"},
+  {id:89,title:"壓力管理大腦使用手冊",short:"壓力管理大腦使用手冊",author:"",type:"心理",cover:"壓力管理大腦使用手冊.jpg"},
+  {id:90,title:"象與騎象人",short:"象與騎象人",author:"強納森·海德特",type:"心理",cover:"象與騎象人.jpg"},
+  {id:91,title:"心流",short:"心流",author:"米哈里·契克森米哈伊",type:"心理",cover:"心流.jpg"},
+  {id:92,title:"自信的躍進",short:"自信的躍進",author:"",type:"心理",cover:"自信的躍進.jpg"},
+  {id:93,title:"金錢心理學",short:"金錢心理學",author:"丹·艾瑞利",type:"財務",cover:"金錢心理學.jpg"},
+  {id:94,title:"跟著柴鼠學FQ，做自己的提款機",short:"跟著柴鼠學FQ",author:"WuQ",type:"財務",cover:"跟著柴鼠學FQ.jpg"},
+  {id:95,title:"習慣致富",short:"習慣致富",author:"湯姆·科利",type:"財務",cover:"習慣致富.jpg"},
+  {id:96,title:"習慣致富：有錢人的習慣",short:"習慣致富（有錢人的習慣）",author:"湯姆·科利",type:"財務",cover:"習慣致富（有錢人的習慣）.jpg"},
+  {id:97,title:"25歲存到100萬",short:"25歲存到100萬",author:"宇助",type:"財務",cover:"25歲存到100萬.jpg"},
+  {id:98,title:"縮時睡眠",short:"縮時睡眠",author:"",type:"健康",cover:"縮時睡眠.jpg"},
+  {id:99,title:"為什麼要睡覺？",short:"為什麼要睡覺？",author:"馬修·沃克",type:"健康",cover:"為什麼要睡覺？.jpg"},
+  {id:100,title:"窮忙世代的翻身準則",short:"窮忙世代的翻身準則",author:"艾兒莎",type:"財務",cover:"窮忙世代的翻身準則.jpg"},
+  {id:101,title:"歡迎來到志祺七七",short:"歡迎來到志祺七七",author:"志祺七七",type:"其他",cover:"歡迎來到志祺七七.jpg"},
+  {id:102,title:"策展人工作指南",short:"策展人工作指南",author:"",type:"其他",cover:"策展人工作指南.jpg"},
+  {id:103,title:"跨域策展時代",short:"跨域策展時代",author:"",type:"其他",cover:"跨域策展時代.jpg"},
+  {id:104,title:"字型設計學",short:"字型設計學",author:"",type:"設計",cover:"字型設計學.jpg"},
+  {id:105,title:"一日一行動的奇蹟",short:"一日一行動的奇蹟",author:"",type:"自我成長",cover:"一日一行動的奇蹟.jpg"},
+  {id:106,title:"一期一會的生命禮物",short:"一期一會的生命禮物",author:"",type:"自我成長",cover:"一期一會的生命禮物.jpg"},
+  {id:107,title:"人生4千個禮拜",short:"人生4千個禮拜",author:"奧利佛·柏克曼",type:"自我成長",cover:"人生4千個禮拜.jpg"},
+  {id:108,title:"人生最大的成就是成為你自己",short:"人生最大的成就是成為你自己",author:"",type:"自我成長",cover:"人生最大的成就是成為你自己.jpg"},
+  {id:109,title:"凡事皆有出路",short:"凡事皆有出路",author:"",type:"自我成長",cover:"凡事皆有出路.jpg"},
+  {id:110,title:"別做熱愛的事，要做真實的自己",short:"別做熱愛的事，要做真實的自己",author:"",type:"自我成長",cover:"別做熱愛的事，要做真實的自己.jpg"},
+  {id:111,title:"原則",short:"原則",author:"瑞·達利歐",type:"自我成長",cover:"原則.jpg"},
+  {id:112,title:"原力效應",short:"原力效應",author:"歐陽立中",type:"自我成長",cover:"原力效應.jpg"},
+  {id:113,title:"峰值體驗",short:"峰值體驗",author:"",type:"自我成長",cover:"峰值體驗.jpg"},
+  {id:114,title:"平衡心態",short:"平衡心態",author:"",type:"自我成長",cover:"平衡心態.jpg"},
+  {id:115,title:"成功，從聚焦一件事開始",short:"成功，從聚焦一件事開始",author:"",type:"自我成長",cover:"成功，從聚焦一件事開始.jpg"},
+  {id:116,title:"每道人生的坎，都是一道加分題",short:"每道人生的坎，都是一道加分題",author:"",type:"自我成長",cover:"每道人生的坎，都是一道加分題.jpg"},
+  {id:117,title:"逆思維",short:"逆思維",author:"",type:"自我成長",cover:"逆思維.jpg"},
+  {id:118,title:"達標",short:"達標",author:"",type:"自我成長",cover:"達標.jpg"},
+  {id:119,title:"鎮靜力",short:"鎮靜力",author:"",type:"自我成長",cover:"鎮靜力.jpg"},
+  {id:120,title:"覺醒的你",short:"覺醒的你",author:"",type:"自我成長",cover:"覺醒的你.jpg"},
+  {id:121,title:"大人學選擇",short:"大人學選擇",author:"",type:"自我成長",cover:"大人學選擇.jpg"},
+  {id:122,title:"女人要堅強而不逞強",short:"女人要堅強而不逞強",author:"",type:"自我成長",cover:"女人要堅強而不逞強.jpg"},
+  {id:123,title:"思考的整理學",short:"思考的整理學",author:"",type:"自我成長",cover:"思考的整理學.jpg"},
+  {id:124,title:"知識的假象",short:"知識的假象",author:"",type:"自我成長",cover:"知識的假象.jpg"},
+  {id:125,title:"深度洞察力",short:"深度洞察力",author:"",type:"自我成長",cover:"深度洞察力.jpg"},
+  {id:126,title:"這一天過得很充實",short:"這一天過得很充實",author:"",type:"自我成長",cover:"這一天過得很充實.jpg"},
+  {id:127,title:"靈感鍛鍊",short:"靈感鍛鍊",author:"",type:"自我成長",cover:"靈感鍛鍊.jpg"},
+  {id:128,title:"變通思維",short:"變通思維",author:"",type:"自我成長",cover:"變通思維.jpg"},
+  {id:129,title:"練習的心境",short:"練習的心境",author:"",type:"自我成長",cover:"練習的心境.jpg"},
+  {id:130,title:"習慣紅利",short:"習慣紅利",author:"",type:"自我成長",cover:"習慣紅利.jpg"},
+  {id:131,title:"大腦喜歡這樣學",short:"大腦喜歡這樣學",author:"",type:"學習",cover:"大腦喜歡這樣學.jpg"},
+  {id:132,title:"學習如何學習",short:"學習如何學習",author:"",type:"學習",cover:"學習如何學習.jpg"},
+  {id:133,title:"用大腦喜歡的方式1人學習",short:"用大腦喜歡的方式1人學習",author:"",type:"學習",cover:"用大腦喜歡的方式1人學習.jpg"},
+  {id:134,title:"逆向工程，你我都能變優秀的秘訣",short:"逆向工程，你我都能變優秀的秘訣",author:"",type:"學習",cover:"逆向工程，你我都能變優秀的秘訣.jpg"},
+  {id:135,title:"知識複利",short:"知識複利",author:"",type:"學習",cover:"知識複利.jpg"},
+  {id:136,title:"怡慧老師的原子習慣實踐之旅",short:"怡慧老師的原子習慣實踐之旅",author:"",type:"學習",cover:"怡慧老師的原子習慣實踐之旅.jpg"},
+  {id:137,title:"高成效學習法則",short:"高成效學習法則",author:"",type:"學習",cover:"高成效學習法則.jpg"},
+  {id:138,title:"3x3系統思考法",short:"3x3系統思考法",author:"",type:"效率",cover:"3x3系統思考法.jpg"},
+  {id:139,title:"5%一流人才的超效時間術",short:"5%一流人才的超效時間術",author:"",type:"效率",cover:"5%一流人才的超效時間術.jpg"},
+  {id:140,title:"CAN DO 工作學",short:"CAN DO 工作學",author:"",type:"效率",cover:"CAN DO 工作學.jpg"},
+  {id:141,title:"再忙也不會出錯的完美工作執行力",short:"再忙也不會出錯的完美工作執行力",author:"",type:"效率",cover:"再忙也不會出錯的完美工作執行力.jpg"},
+  {id:142,title:"只工作不上班的自主人生",short:"只工作不上班的自主人生",author:"",type:"效率",cover:"只工作不上班的自主人生.jpg"},
+  {id:143,title:"是狼型人就不要逼自己早睡早起",short:"是狼型人就不要逼自己早睡早起",author:"",type:"效率",cover:"是狼型人就不要逼自己早睡早起.jpg"},
+  {id:144,title:"時間煉金術",short:"時間煉金術",author:"",type:"效率",cover:"時間煉金術.jpg"},
+  {id:145,title:"最強工作習慣",short:"最強工作習慣",author:"",type:"效率",cover:"最強工作習慣.jpg"},
+  {id:146,title:"最有專注力的一年",short:"最有專注力的一年",author:"",type:"效率",cover:"最有專注力的一年.jpg"},
+  {id:147,title:"期限效應",short:"期限效應",author:"",type:"效率",cover:"期限效應.jpg"},
+  {id:148,title:"生時間",short:"生時間",author:"",type:"效率",cover:"生時間.jpg"},
+  {id:149,title:"留白工作法",short:"留白工作法",author:"",type:"效率",cover:"留白工作法.jpg"},
+  {id:150,title:"清單Hold不住的人生",short:"清單Hold不住的人生",author:"",type:"效率",cover:"清單Hold不住的人生.jpg"},
+  {id:151,title:"當你自律自控，才能又美又爽",short:"當你自律自控，才能又美又爽",author:"",type:"效率",cover:"當你自律自控，才能又美又爽.jpg"},
+  {id:152,title:"深度數位大掃除",short:"深度數位大掃除",author:"",type:"效率",cover:"深度數位大掃除.jpg"},
+  {id:153,title:"靜下來工作",short:"靜下來工作",author:"",type:"效率",cover:"靜下來工作.jpg"},
+  {id:154,title:"順著大腦習性懶人也有高績效",short:"順著大腦習性懶人也有高績效",author:"",type:"效率",cover:"順著大腦習性懶人也有高績效.jpg"},
+  {id:155,title:"零干擾",short:"零干擾",author:"",type:"效率",cover:"零干擾.jpg"},
+  {id:156,title:"我的一天從4點30分開始",short:"我的一天從4點30分開始",author:"",type:"效率",cover:"我的一天從4點30分開始.jpg"},
+  {id:157,title:"打造第二大腦",short:"打造第二大腦",author:"",type:"效率",cover:"打造第二大腦.jpg"},
+  {id:158,title:"Google、臉書、微軟專家教你的66堂科技趨勢必修課",short:"Google、臉書、微軟專家教你的66堂科技趨勢必修課",author:"",type:"商業",cover:"Google、臉書、微軟專家教你的66堂科技趨勢必修課.jpg"},
+  {id:159,title:"一人公司，在自媒體時代掌握流量密碼",short:"一人公司，在自媒體時代掌握流量密碼",author:"",type:"商業",cover:"一人公司，在自媒體時代掌握流量密碼.jpg"},
+  {id:160,title:"人才",short:"人才",author:"",type:"商業",cover:"人才.jpg"},
+  {id:161,title:"人力資源管理的12堂課",short:"人力資源管理的12堂課",author:"",type:"商業",cover:"人力資源管理的12堂課.jpg"},
+  {id:162,title:"六頂思考帽",short:"六頂思考帽",author:"愛德華·狄波諾",type:"商業",cover:"六頂思考帽.jpg"},
+  {id:163,title:"創造力的修行：打開一切可能",short:"創造力的修行：打開一切可能",author:"",type:"商業",cover:"創造力的修行：打開一切可能.jpg"},
+  {id:164,title:"唐鳳的破框思考力",short:"唐鳳的破框思考力",author:"",type:"商業",cover:"唐鳳的破框思考力.jpg"},
+  {id:165,title:"定位",short:"定位",author:"艾·里斯＆傑克·特勞特",type:"商業",cover:"定位.jpg"},
+  {id:166,title:"數位躍升力",short:"數位躍升力",author:"",type:"商業",cover:"數位躍升力.jpg"},
+  {id:167,title:"明兹伯格談高效團隊",short:"明兹伯格談高效團隊",author:"",type:"商業",cover:"明兹伯格談高效團隊.jpg"},
+  {id:168,title:"流量密碼",short:"流量密碼",author:"",type:"商業",cover:"流量密碼.jpg"},
+  {id:169,title:"社群時代最強行銷術",short:"社群時代最強行銷術",author:"",type:"商業",cover:"社群時代最強行銷術.jpg"},
+  {id:170,title:"管理學，最強商業邏輯養成",short:"管理學，最強商業邏輯養成",author:"",type:"商業",cover:"管理學，最強商業邏輯養成.jpg"},
+  {id:171,title:"極簡商業課",short:"極簡商業課",author:"",type:"商業",cover:"極簡商業課.jpg"},
+  {id:172,title:"精實創業",short:"精實創業",author:"",type:"商業",cover:"精實創業.jpg"},
+  {id:173,title:"精準敘事",short:"精準敘事",author:"",type:"商業",cover:"精準敘事.jpg"},
+  {id:174,title:"線上線下完美結合的攻心行銷",short:"線上線下完美結合的攻心行銷",author:"",type:"商業",cover:"線上線下完美結合的攻心行銷.jpg"},
+  {id:175,title:"複利領導",short:"複利領導",author:"",type:"商業",cover:"複利領導.jpg"},
+  {id:176,title:"高成長思維",short:"高成長思維",author:"",type:"商業",cover:"高成長思維.jpg"},
+  {id:177,title:"高影響力的美感文案學",short:"高影響力的美感文案學",author:"",type:"商業",cover:"高影響力的美感文案學.jpg"},
+  {id:178,title:"遊戲化實戰全書",short:"遊戲化實戰全書",author:"",type:"商業",cover:"遊戲化實戰全書.jpg"},
+  {id:179,title:"領導者的試煉",short:"領導者的試煉",author:"",type:"商業",cover:"領導者的試煉.jpg"},
+  {id:180,title:"永續力",short:"永續力",author:"",type:"商業",cover:"永續力.jpg"},
+  {id:181,title:"成功者的互利方程式",short:"成功者的互利方程式",author:"",type:"商業",cover:"成功者的互利方程式.jpg"},
+  {id:182,title:"駭客思維",short:"駭客思維",author:"",type:"商業",cover:"駭客思維.jpg"},
+  {id:183,title:"影響力習慣",short:"影響力習慣",author:"",type:"商業",cover:"影響力習慣.jpg"},
+  {id:184,title:"我，就是品牌",short:"我，就是品牌",author:"",type:"商業",cover:"我，就是品牌.jpg"},
+  {id:185,title:"聰明思考",short:"聰明思考",author:"",type:"商業",cover:"聰明思考.jpg"},
+  {id:186,title:"50堂最療癒人心的說話練習",short:"50堂最療癒人心的說話練習",author:"",type:"溝通",cover:"50堂最療癒人心的說話練習.jpg"},
+  {id:187,title:"一小時學會TED故事文案力",short:"一小時學會TED故事文案力",author:"",type:"溝通",cover:"一小時學會TED故事文案力.jpg"},
+  {id:188,title:"有溫度溝通課",short:"有溫度溝通課",author:"",type:"溝通",cover:"有溫度溝通課.jpg"},
+  {id:189,title:"聊天心理學",short:"聊天心理學",author:"",type:"溝通",cover:"聊天心理學.jpg"},
+  {id:190,title:"華頓商學院最受歡迎的談判課",short:"華頓商學院最受歡迎的談判課",author:"",type:"溝通",cover:"華頓商學院最受歡迎的談判課.jpg"},
+  {id:191,title:"哈佛法學院的情緒談判課",short:"哈佛法學院的情緒談判課",author:"",type:"溝通",cover:"哈佛法學院的情緒談判課.jpg"},
+  {id:192,title:"影響力",short:"影響力",author:"羅伯特·席爾迪尼",type:"溝通",cover:"影響力.jpg"},
+  {id:193,title:"精準提問",short:"精準提問",author:"",type:"溝通",cover:"精準提問.jpg"},
+  {id:194,title:"自我提問的力量",short:"自我提問的力量",author:"",type:"溝通",cover:"自我提問的力量.jpg"},
+  {id:195,title:"MBTI我和我的使用說明書",short:"MBTI我和我的使用說明書",author:"",type:"心理",cover:"MBTI我和我的使用說明書.jpg"},
+  {id:196,title:"多巴胺國度",short:"多巴胺國度",author:"安娜·藍布克",type:"心理",cover:"多巴胺國度.jpg"},
+  {id:197,title:"囤積癖",short:"囤積癖",author:"",type:"心理",cover:"囤積癖.jpg"},
+  {id:198,title:"情緒恢復",short:"情緒恢復",author:"",type:"心理",cover:"情緒恢復.jpg"},
+  {id:199,title:"意念使用手冊",short:"意念使用手冊",author:"",type:"心理",cover:"意念使用手冊.jpg"},
+  {id:200,title:"我們身上有光",short:"我們身上有光",author:"",type:"心理",cover:"我們身上有光.jpg"},
+  {id:201,title:"我決定生活裡只留下對的人",short:"我決定生活裡只留下對的人",author:"",type:"心理",cover:"我決定生活裡只留下對的人.jpg"},
+  {id:202,title:"心理摩擦力",short:"心理摩擦力",author:"",type:"心理",cover:"心理摩擦力.jpg"},
+  {id:203,title:"心適力",short:"心適力",author:"",type:"心理",cover:"心適力.jpg"},
+  {id:204,title:"尋找復原力",short:"尋找復原力",author:"",type:"心理",cover:"尋找復原力.jpg"},
+  {id:205,title:"快思慢想",short:"快思慢想",author:"丹尼爾·康納曼",type:"心理",cover:"快思慢想.jpg"},
+  {id:206,title:"思辨賽局",short:"思辨賽局",author:"",type:"心理",cover:"思辨賽局.jpg"},
+  {id:207,title:"越愛越痛？我們的關係出了什麼錯？",short:"越愛越痛？我們的關係出了什麼錯？",author:"",type:"心理",cover:"越愛越痛？我們的關係出了什麼錯？.jpg"},
+  {id:208,title:"蛤蟆先生去看心理師",short:"蛤蟆先生去看心理師",author:"",type:"心理",cover:"蛤蟆先生去看心理師.jpg"},
+  {id:209,title:"轉念的力量",short:"轉念的力量",author:"",type:"心理",cover:"轉念的力量.jpg"},
+  {id:210,title:"煩惱斷捨離",short:"煩惱斷捨離",author:"",type:"心理",cover:"煩惱斷捨離.jpg"},
+  {id:211,title:"覺察力",short:"覺察力",author:"",type:"心理",cover:"覺察力.jpg"},
+  {id:212,title:"輕鬆駕馭意志力",short:"輕鬆駕馭意志力",author:"",type:"心理",cover:"輕鬆駕馭意志力.jpg"},
+  {id:213,title:"不生氣之後變身有錢人",short:"不生氣之後變身有錢人",author:"",type:"財務",cover:"不生氣之後變身有錢人.jpg"},
+  {id:214,title:"別把你的錢留到死",short:"別把你的錢留到死",author:"",type:"財務",cover:"別把你的錢留到死.jpg"},
+  {id:215,title:"富爸爸窮爸爸",short:"富爸爸窮爸爸",author:"羅伯特·清崎",type:"財務",cover:"富爸爸窮爸爸.jpg"},
+  {id:216,title:"複利效應",short:"複利效應",author:"",type:"財務",cover:"複利效應.jpg"},
+  {id:217,title:"養錢練習",short:"養錢練習",author:"",type:"財務",cover:"養錢練習.jpg"},
+  {id:218,title:"閱讀變現",short:"閱讀變現",author:"",type:"財務",cover:"閱讀變現.jpg"},
+  {id:219,title:"史丹佛大學最強身心鍛鍊術",short:"史丹佛大學最強身心鍛鍊術",author:"",type:"健康",cover:"史丹佛大學最強身心鍛鍊術.jpg"},
+  {id:220,title:"深度精力管理",short:"深度精力管理",author:"",type:"健康",cover:"深度精力管理.jpg"},
+  {id:221,title:"人生複本",short:"人生複本",author:"",type:"其他",cover:"人生複本.jpg"},
+  {id:222,title:"創造文明的人",short:"創造文明的人",author:"",type:"其他",cover:"創造文明的人.jpg"},
+  {id:223,title:"我的99個私抽屜",short:"我的99個私抽屜",author:"",type:"其他",cover:"我的99個私抽屜.jpg"},
+  {id:224,title:"明日明日又明日",short:"明日明日又明日",author:"",type:"其他",cover:"明日明日又明日.jpg"},
+  {id:225,title:"遊戲人生",short:"遊戲人生",author:"",type:"其他",cover:"遊戲人生.jpg"},
+  {id:226,title:"遊戲人生72變",short:"遊戲人生72變",author:"",type:"其他",cover:"遊戲人生72變.jpg"},
+  {id:227,title:"鋼鐵人馬斯克",short:"鋼鐵人馬斯克",author:"",type:"其他",cover:"鋼鐵人馬斯克.jpg"},
+  {id:228,title:"賈伯斯傳",short:"賈伯斯傳",author:"華特·艾薩克森",type:"其他",cover:"賈伯斯傳.jpg"},
+  {id:229,title:"貝佐斯傳",short:"貝佐斯傳",author:"",type:"其他",cover:"貝佐斯傳.jpg"},
+  {id:230,title:"令人腦洞大開的藝術思考法",short:"令人腦洞大開的藝術思考法",author:"",type:"其他",cover:"令人腦洞大開的藝術思考法.jpg"},
+  {id:231,title:"家弒服務",short:"家弒服務",author:"",type:"其他",cover:"家弒服務.jpg"},
+];
+
+// Owner mode: only on localhost
+const isOwner = ['localhost', '127.0.0.1', ''].includes(location.hostname);
+
+// Status storage (LocalStorage)
+const STORAGE_KEY = 'mia_books_status';
+let _storage = null;
+try { _storage = localStorage; } catch(e) {}
+function storageGet() { try { return JSON.parse((_storage && _storage.getItem(STORAGE_KEY)) || '{}'); } catch(e) { return {}; } }
+function storageSet(data) { try { if (_storage) _storage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {} }
+let statusMap = storageGet();
+
+function getStatus(id) {
+  const entry = statusMap[id];
+  if (!entry) return '待讀';
+  return typeof entry === 'string' ? entry : entry.status;
+}
+
+function getRating(id) {
+  const entry = statusMap[id];
+  if (!entry || typeof entry === 'string') return 0;
+  return entry.rating || 0;
+}
+
+function updateStars(rating, hoverVal) {
+  const val = hoverVal !== undefined ? hoverVal : rating;
+  document.querySelectorAll('#modal-stars .star').forEach(star => {
+    const v = parseInt(star.dataset.v);
+    star.classList.toggle('filled', hoverVal === undefined && v <= rating);
+    star.classList.toggle('hover', hoverVal !== undefined && v <= val);
+  });
+}
+
+function initStarEvents() {
+  const starsEl = document.getElementById('modal-stars');
+  starsEl.querySelectorAll('.star').forEach(star => {
+    star.addEventListener('mouseenter', () => updateStars(getRating(currentModal.id), parseInt(star.dataset.v)));
+    star.addEventListener('mouseleave', () => updateStars(getRating(currentModal.id)));
+    star.addEventListener('click', () => {
+      if (!currentModal) return;
+      const v = parseInt(star.dataset.v);
+      const entry = statusMap[currentModal.id];
+      if (entry && typeof entry === 'object') {
+        entry.rating = v;
+        storageSet(statusMap);
+        updateStars(v);
+      }
+    });
+  });
+}
+
+function getTimestamps(id) {
+  const entry = statusMap[id];
+  if (!entry || typeof entry === 'string') return {};
+  return { startedAt: entry.startedAt || null, finishedAt: entry.finishedAt || null };
+}
+
+function formatDateTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function saveStatus(id, s) {
+  const prev = statusMap[id];
+  const prevStatus = typeof prev === 'string' ? prev : (prev && prev.status) || '待讀';
+  const prevTimestamps = typeof prev === 'object' && prev ? { startedAt: prev.startedAt, finishedAt: prev.finishedAt } : {};
+  const now = new Date().toISOString();
+  const entry = { status: s };
+  if (s === '待讀') {
+    // 清除所有時間記錄
+  } else if (s === '閱讀中') {
+    entry.startedAt = prevStatus !== '閱讀中' ? now : prevTimestamps.startedAt;
+    if (prevTimestamps.finishedAt) entry.finishedAt = prevTimestamps.finishedAt;
+  } else if (s === '已讀完') {
+    if (prevTimestamps.startedAt) entry.startedAt = prevTimestamps.startedAt;
+    entry.finishedAt = prevStatus !== '已讀完' ? now : prevTimestamps.finishedAt;
+  }
+  statusMap[id] = entry;
+  storageSet(statusMap);
+  updateStats();
+}
+
+// State
+let currentCat = '全部';
+let currentStatus = '全部';
+let currentSearch = '';
+let currentModal = null;
+let currentSort = 'default'; // 'default' | 'stroke'
+
+function toggleSort() {
+  currentSort = currentSort === 'default' ? 'stroke' : 'default';
+  const btn = document.getElementById('sort-btn');
+  if (currentSort === 'stroke') {
+    btn.textContent = '↕ 筆畫排列';
+    btn.classList.add('active');
+  } else {
+    btn.textContent = '↕ 原始順序';
+    btn.classList.remove('active');
+  }
+  render();
+}
+
+// Render
+function render() {
+  const grid = document.getElementById('books-grid');
+  const filtered = books.filter(b => {
+    const s = getStatus(b.id);
+    const matchCat = currentCat === '全部' || b.type === currentCat;
+    const matchStatus = currentStatus === '全部' || s === currentStatus;
+    const q = currentSearch.toLowerCase();
+    const matchSearch = !q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q);
+    return matchCat && matchStatus && matchSearch;
+  });
+
+  if (currentSort === 'stroke') {
+    filtered.sort((a, b) => a.title.localeCompare(b.title, 'zh-TW', { sensitivity: 'variant' }));
+  }
+
+  document.getElementById('showing-count').textContent = filtered.length;
+
+  grid.innerHTML = '';
+
+  if (filtered.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'no-results';
+    empty.style.display = 'block';
+    empty.textContent = '沒有找到符合條件的書籍';
+    grid.appendChild(empty);
+    return;
+  }
+
+  filtered.forEach((b, i) => {
+    const s = getStatus(b.id);
+    const card = document.createElement('div');
+    card.className = 'book-card';
+    card.style.animationDelay = `${Math.min(i * 0.03, 0.5)}s`;
+
+    const imgPath = `covers/${encodeURIComponent(b.cover)}`;
+
+    card.innerHTML = `
+      <div class="book-cover-wrap">
+        <img class="book-cover" src="${imgPath}" alt="${b.short}"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="book-cover-placeholder" style="display:none">
+          <span class="placeholder-title">${b.short}</span>
+        </div>
+        <div class="book-overlay">
+          <div class="overlay-title">${b.title}</div>
+          ${b.author ? `<div class="overlay-author">${b.author}</div>` : ''}
+        </div>
+        ${isOwner ? `<div class="status-badge ${s}">${s}</div>` : ''}
+      </div>
+      <div class="book-type">
+        <span class="type-tag">${b.type}</span>
+        ${getRating(b.id) > 0 ? `<span class="card-stars">${[1,2,3,4,5].map(v => `<span class="card-star${v <= getRating(b.id) ? ' filled' : ''}">★</span>`).join('')}</span>` : `<span class="book-num">${b.id}</span>`}
+        ${getNotes(b.id) ? `<span class="card-note-dot" title="有閱讀心得"></span>` : ''}
+      </div>
+    `;
+
+    card.addEventListener('click', () => openModal(b));
+    grid.appendChild(card);
+  });
+}
+
+function updateStats() {
+  const total = books.length;
+  const reading = books.filter(b => getStatus(b.id) === '閱讀中').length;
+  const done = books.filter(b => getStatus(b.id) === '已讀完').length;
+  document.getElementById('total-count').textContent = total;
+  document.getElementById('reading-count').textContent = reading;
+  document.getElementById('done-count').textContent = done;
+}
+
+// Filter
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    render();
+  });
+});
+
+document.querySelectorAll('.status-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentStatus = btn.dataset.status;
+    render();
+  });
+});
+
+document.getElementById('search-input').addEventListener('input', e => {
+  currentSearch = e.target.value;
+  render();
+});
+
+// Modal
+function openModal(b) {
+  currentModal = b;
+  const overlay = document.getElementById('modal-overlay');
+  document.getElementById('modal-img').src = `covers/${encodeURIComponent(b.cover)}`;
+  document.getElementById('modal-img').alt = b.short;
+  document.getElementById('modal-type').textContent = b.type;
+  document.getElementById('modal-title').textContent = b.title;
+  document.getElementById('modal-author').textContent = b.author || '作者未記錄';
+
+  // Update status buttons
+  const s = getStatus(b.id);
+  document.querySelectorAll('.status-select-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.s === s);
+  });
+
+  // Owner-only sections
+  document.getElementById('modal-actions').style.display = isOwner ? '' : 'none';
+
+  if (isOwner) {
+    // Update date display
+    const ts = getTimestamps(b.id);
+    const startedEl = document.getElementById('modal-started');
+    const finishedEl = document.getElementById('modal-finished');
+    document.getElementById('modal-started-val').textContent = formatDateTime(ts.startedAt);
+    document.getElementById('modal-finished-val').textContent = formatDateTime(ts.finishedAt);
+    startedEl.classList.toggle('visible', !!ts.startedAt);
+    finishedEl.classList.toggle('visible', !!ts.finishedAt);
+
+    // Update rating
+    const ratingEl = document.getElementById('modal-rating');
+    ratingEl.classList.toggle('visible', s === '已讀完');
+    updateStars(getRating(b.id));
+
+    // Update notes
+    const notesEl = document.getElementById('modal-notes');
+    const textarea = document.getElementById('notes-textarea');
+    notesEl.classList.toggle('visible', s === '閱讀中' || s === '已讀完');
+    textarea.value = getNotes(b.id);
+    document.getElementById('notes-saved').classList.remove('show');
+  } else {
+    document.getElementById('modal-dates').style.display = 'none';
+    document.getElementById('modal-rating').classList.remove('visible');
+    document.getElementById('modal-notes').classList.remove('visible');
+  }
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModalBtn();
+}
+
+function closeModalBtn() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function setStatus(btn) {
+  if (!currentModal) return;
+  const s = btn.dataset.s;
+  saveStatus(currentModal.id, s);
+  document.querySelectorAll('.status-select-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.s === s);
+  });
+  // Update badge in grid
+  render();
+  // Keep modal open, re-open after render
+  openModal(currentModal);
+}
+
+// Notes
+function getNotes(id) {
+  const entry = statusMap[id];
+  if (!entry || typeof entry === 'string') return '';
+  return entry.notes || '';
+}
+
+let _notesSaveTimer = null;
+function initNotesEvents() {
+  const textarea = document.getElementById('notes-textarea');
+  const savedEl = document.getElementById('notes-saved');
+  textarea.addEventListener('input', () => {
+    clearTimeout(_notesSaveTimer);
+    _notesSaveTimer = setTimeout(() => {
+      if (!currentModal) return;
+      const entry = statusMap[currentModal.id];
+      if (entry && typeof entry === 'object') {
+        entry.notes = textarea.value;
+        storageSet(statusMap);
+        savedEl.classList.add('show');
+        setTimeout(() => savedEl.classList.remove('show'), 1800);
+        // Re-render card in background to update dot indicator
+        render();
+      }
+    }, 600);
+  });
+}
+
+// Save page
+
+// ===== OBSIDIAN INTEGRATION =====
+const OBS_KEY = 'mia_obs_settings';
+
+function getObsSettings() {
+  try { return JSON.parse(localStorage.getItem(OBS_KEY) || '{}'); } catch(e) { return {}; }
+}
+
+function openObsSettings() {
+  const s = getObsSettings();
+  document.getElementById('obs-api-key-input').value = s.apiKey || '';
+  document.getElementById('obs-notes-path-input').value = s.notesPath || 'Books/心得';
+  document.getElementById('obs-settings-overlay').classList.add('open');
+}
+
+function closeObsSettings(e) {
+  if (e.target === document.getElementById('obs-settings-overlay')) closeObsSettingsBtn();
+}
+
+function closeObsSettingsBtn() {
+  document.getElementById('obs-settings-overlay').classList.remove('open');
+}
+
+function saveObsSettings() {
+  const apiKey = document.getElementById('obs-api-key-input').value.trim();
+  const notesPath = document.getElementById('obs-notes-path-input').value.trim() || 'Books/心得';
+  try { localStorage.setItem(OBS_KEY, JSON.stringify({ apiKey, notesPath })); } catch(e) {}
+  closeObsSettingsBtn();
+  updateObsIconState();
+}
+
+function updateObsIconState() {
+  const btn = document.getElementById('obs-icon-btn');
+  if (!isOwner) return;
+  btn.style.display = '';
+  const s = getObsSettings();
+  btn.classList.toggle('connected', !!s.apiKey);
+}
+
+async function syncToObsidian() {
+  if (!currentModal) return;
+  const s = getObsSettings();
+  if (!s.apiKey) {
+    openObsSettings();
+    return;
+  }
+
+  const b = currentModal;
+  const btn = document.getElementById('obs-sync-btn');
+  const labelEl = document.getElementById('obs-sync-label');
+  const iconEl = document.getElementById('obs-sync-icon');
+
+  // Build note content
+  const status = getStatus(b.id);
+  const ts = getTimestamps(b.id);
+  const rating = getRating(b.id);
+  const notes = getNotes(b.id);
+  const stars = rating > 0 ? '⭐'.repeat(rating) : '尚未評分';
+  const startedStr = ts.startedAt ? formatDateTime(ts.startedAt) : '—';
+  const finishedStr = ts.finishedAt ? formatDateTime(ts.finishedAt) : '—';
+
+  const content = `# ${b.title}\n\n**作者**：${b.author || '未記錄'}\n**類型**：${b.type}\n**狀態**：${status}\n**開始閱讀**：${startedStr}\n**讀完時間**：${finishedStr}\n**評分**：${stars}\n\n---\n\n## 閱讀心得\n\n${notes || '（尚無心得）'}\n`;
+
+  const notesPath = (s.notesPath || 'Books/心得').replace(/\/$/, '');
+  const fileName = `${b.title.replace(/[\\/:*?"<>|]/g, '_')}.md`;
+  const filePath = `${notesPath}/${fileName}`;
+
+  // UI: syncing state
+  btn.classList.remove('success', 'error');
+  btn.classList.add('syncing');
+  btn.disabled = true;
+  iconEl.textContent = '⏳';
+  labelEl.textContent = '同步中…';
+
+  try {
+    const res = await fetch(`http://localhost:27123/vault/${encodeURIComponent(filePath)}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${s.apiKey}`,
+        'Content-Type': 'text/markdown',
+      },
+      body: content,
+    });
+
+    btn.classList.remove('syncing');
+    btn.disabled = false;
+
+    if (res.ok || res.status === 204) {
+      btn.classList.add('success');
+      iconEl.textContent = '✓';
+      labelEl.textContent = '已同步到 Obsidian';
+      setTimeout(() => {
+        btn.classList.remove('success');
+        iconEl.textContent = '🔮';
+        labelEl.textContent = '同步到 Obsidian';
+      }, 2500);
+    } else {
+      throw new Error(`HTTP ${res.status}`);
+    }
+  } catch(err) {
+    btn.classList.remove('syncing');
+    btn.disabled = false;
+    btn.classList.add('error');
+    iconEl.textContent = '✕';
+    labelEl.textContent = err.message.includes('Failed to fetch') ? '無法連線，請確認 Obsidian 開啟中' : `錯誤：${err.message}`;
+    setTimeout(() => {
+      btn.classList.remove('error');
+      iconEl.textContent = '🔮';
+      labelEl.textContent = '同步到 Obsidian';
+    }, 4000);
+  }
+}
+
+// ESC to close
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeModalBtn();
+    closeObsSettingsBtn();
+  }
+});
+
+// Init
+updateStats();
+render();
+initStarEvents();
+initNotesEvents();
+updateObsIconState();
+</script>
+</body>
+</html>

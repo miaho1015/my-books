@@ -128,9 +128,8 @@
     max-width: 1400px;
     margin: 0 auto;
     display: flex;
-    align-items: center;
-    gap: 24px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 10px;
   }
 
   /* Search */
@@ -216,7 +215,7 @@
     margin-left: auto;
   }
 
-  .status-btn {
+  .status-btn, .fmt-btn {
     padding: 6px 14px;
     border-radius: 20px;
     border: 1px solid var(--border);
@@ -224,9 +223,18 @@
     font-size: 12px;
     font-family: inherit;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
     white-space: nowrap;
+    color: var(--text-muted);
+    flex-shrink: 0;
   }
+
+  .fmt-btn[data-fmt="全部"] { color: var(--accent); border-color: rgba(201,146,58,0.3); }
+  .fmt-btn[data-fmt="電子書"] { color: #6aade0; border-color: rgba(106,173,224,0.3); }
+  .fmt-btn[data-fmt="實體書"] { color: #6ac08a; border-color: rgba(106,192,138,0.3); }
+  .fmt-btn.active[data-fmt="全部"] { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+  .fmt-btn.active[data-fmt="電子書"] { background: #6aade0; color: var(--bg); border-color: #6aade0; }
+  .fmt-btn.active[data-fmt="實體書"] { background: #6ac08a; color: var(--bg); border-color: #6ac08a; }
 
   .status-btn[data-status="全部"] { color: var(--accent); border-color: rgba(201,146,58,0.3); }
   .status-btn[data-status="待讀"] { color: var(--text-muted); }
@@ -935,14 +943,17 @@
 <!-- CONTROLS -->
 <div class="controls">
   <div class="controls-inner">
-    <!-- Search -->
-    <div class="search-wrap">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-      <input type="search" id="search-input" placeholder="搜尋書名或作者…">
+    <!-- Row 1: Search + Add -->
+    <div style="display:flex;align-items:center;gap:12px;width:100%;">
+      <div class="search-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="search" id="search-input" placeholder="搜尋書名或作者…">
+      </div>
+      <button onclick="openAddBookModal()" style="margin-left:auto;padding:7px 16px;background:var(--accent);border:none;border-radius:20px;color:#141210;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:opacity 0.2s" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">＋ 新增書籍</button>
     </div>
 
-    <!-- Category filter -->
-    <div class="filter-group">
+    <!-- Row 2: Category filter -->
+    <div class="filter-group" style="width:100%;">
       <span class="filter-label">類型</span>
       <button class="filter-btn active" data-cat="全部">全部</button>
       <button class="filter-btn" data-cat="自我成長">自我成長</button>
@@ -957,12 +968,18 @@
       <button class="filter-btn" data-cat="其他">其他</button>
     </div>
 
-    <!-- Status filter -->
-    <div class="status-filter">
+    <!-- Row 3: Status + Format filter -->
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;width:100%;">
+      <span class="filter-label">狀態</span>
       <button class="status-btn active" data-status="全部">全部</button>
       <button class="status-btn" data-status="待讀">待讀</button>
       <button class="status-btn" data-status="閱讀中">閱讀中</button>
       <button class="status-btn" data-status="已讀完">已讀完</button>
+      <div style="display:flex;align-items:center;gap:6px;margin-left:auto;">
+        <button class="fmt-btn active" data-fmt="全部">全部格式</button>
+        <button class="fmt-btn" data-fmt="電子書">📱 電子書</button>
+        <button class="fmt-btn" data-fmt="實體書">📗 實體書</button>
+      </div>
     </div>
   </div>
 </div>
@@ -970,7 +987,7 @@
 <!-- RESULT INFO -->
 <div class="result-info" id="result-info">
   <div>顯示 <span id="showing-count">638</span> 本</div>
-  <button class="sort-btn" id="sort-btn" onclick="toggleSort()">↕ 原始順序</button>
+  <button class="sort-btn" id="sort-btn" onclick="toggleSort()">↕ 最新優先</button>
 </div>
 
 <!-- GRID -->
@@ -1040,6 +1057,10 @@
         <button class="status-select-btn" data-s="待讀" onclick="setStatus(this)">📚 待讀</button>
         <button class="status-select-btn" data-s="閱讀中" onclick="setStatus(this)">📖 閱讀中</button>
         <button class="status-select-btn" data-s="已讀完" onclick="setStatus(this)">✅ 已讀完</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+        <button onclick="openEditBook(currentModal&&currentModal.id)" style="flex:1;padding:8px;background:var(--accent-dim);border:1px solid var(--border);border-radius:var(--radius);color:var(--accent2);font-family:inherit;font-size:12px;cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='rgba(201,146,58,0.22)'" onmouseout="this.style.background='var(--accent-dim)'">✏️ 編輯</button>
+        <button onclick="deleteBook(currentModal&&currentModal.id)" style="flex:1;padding:8px;background:rgba(224,112,112,0.08);border:1px solid rgba(224,112,112,0.22);border-radius:var(--radius);color:#e07878;font-family:inherit;font-size:12px;cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='rgba(224,112,112,0.16)'" onmouseout="this.style.background='rgba(224,112,112,0.08)'">🗑 刪除</button>
       </div>
     </div>
   </div>
@@ -1754,8 +1775,12 @@ function saveStatus(id, s) {
   const prev = statusMap[id];
   const prevStatus = typeof prev === 'string' ? prev : (prev && prev.status) || '待讀';
   const prevTimestamps = typeof prev === 'object' && prev ? { startedAt: prev.startedAt, finishedAt: prev.finishedAt } : {};
+  const prevFormat = typeof prev === 'object' && prev ? prev.format : null;
+  const prevRating = typeof prev === 'object' && prev ? prev.rating : null;
   const now = new Date().toISOString();
   const entry = { status: s };
+  if (prevFormat) entry.format = prevFormat;
+  if (prevRating) entry.rating = prevRating;
   if (s === '待讀') {
     // 清除所有時間記錄
   } else if (s === '閱讀中') {
@@ -1773,18 +1798,19 @@ function saveStatus(id, s) {
 // State
 let currentCat = '全部';
 let currentStatus = '全部';
+let currentFormat = '全部';
 let currentSearch = '';
 let currentModal = null;
-let currentSort = 'default'; // 'default' | 'stroke'
+let currentSort = 'newest'; // 'newest' | 'stroke'
 
 function toggleSort() {
-  currentSort = currentSort === 'default' ? 'stroke' : 'default';
+  currentSort = currentSort === 'newest' ? 'stroke' : 'newest';
   const btn = document.getElementById('sort-btn');
   if (currentSort === 'stroke') {
     btn.textContent = '↕ 筆畫排列';
     btn.classList.add('active');
   } else {
-    btn.textContent = '↕ 原始順序';
+    btn.textContent = '↕ 最新優先';
     btn.classList.remove('active');
   }
   render();
@@ -1797,13 +1823,16 @@ function render() {
     const s = getStatus(b.id);
     const matchCat = currentCat === '全部' || b.type === currentCat;
     const matchStatus = currentStatus === '全部' || s === currentStatus;
+    const matchFormat = currentFormat === '全部' || getFormat(b.id) === currentFormat;
     const q = currentSearch.toLowerCase();
     const matchSearch = !q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q);
-    return matchCat && matchStatus && matchSearch;
+    return matchCat && matchStatus && matchFormat && matchSearch;
   });
 
   if (currentSort === 'stroke') {
     filtered.sort((a, b) => a.title.localeCompare(b.title, 'zh-TW', { sensitivity: 'variant' }));
+  } else {
+    filtered.sort((a, b) => b.id - a.id);
   }
 
   document.getElementById('showing-count').textContent = filtered.length;
@@ -1877,6 +1906,15 @@ document.querySelectorAll('.status-btn').forEach(btn => {
     document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentStatus = btn.dataset.status;
+    render();
+  });
+});
+
+document.querySelectorAll('.fmt-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.fmt-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFormat = btn.dataset.fmt;
     render();
   });
 });
@@ -1963,20 +2001,23 @@ function setStatus(btn) {
 // Notes
 function getFormat(id) {
   const entry = statusMap[id];
-  if (!entry || typeof entry === 'string') return null;
-  return entry.format || null;
+  if (!entry || typeof entry === 'string') return '電子書';
+  return entry.format || '電子書';
 }
 
 function setFormat(btn) {
   if (!currentModal) return;
   const f = btn.dataset.f;
-  const entry = statusMap[currentModal.id];
-  if (entry && typeof entry === 'object') {
-    // Toggle off if already active
-    entry.format = entry.format === f ? null : f;
-    storageSet(statusMap);
+  const id = currentModal.id;
+  const prev = statusMap[id];
+  if (!prev || typeof prev === 'string') {
+    const status = typeof prev === 'string' ? prev : '待讀';
+    statusMap[id] = { status, format: f };
+  } else {
+    prev.format = prev.format === f ? '電子書' : f;
   }
-  updateFormatBtns(getFormat(currentModal.id));
+  storageSet(statusMap);
+  updateFormatBtns(getFormat(id));
   render();
 }
 
@@ -2132,6 +2173,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     closeModalBtn();
     closeObsSettingsBtn();
+    closeBookEdit();
   }
 });
 
@@ -2141,6 +2183,134 @@ render();
 initStarEvents();
 initNotesEvents();
 updateObsIconState();
+</script>
+
+<!-- ADD/EDIT BOOK MODAL -->
+<div id="book-edit-overlay" onclick="if(event.target===this)closeBookEdit()" style="position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.6);padding:28px;position:relative">
+    <button onclick="closeBookEdit()" style="position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button>
+    <div id="be-modal-title" style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;margin-bottom:20px;color:var(--text)">新增書籍</div>
+    <div style="margin-bottom:12px">
+      <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;letter-spacing:0.5px">書名 *</label>
+      <input id="be-title" type="text" placeholder="完整書名" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;padding:8px 10px;outline:none">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div>
+        <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;letter-spacing:0.5px">作者</label>
+        <input id="be-author" type="text" placeholder="作者名稱" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;padding:8px 10px;outline:none">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;letter-spacing:0.5px">類型</label>
+        <select id="be-type" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;padding:8px 10px;outline:none">
+          <option>自我成長</option><option>效率</option><option>商業</option><option>溝通</option><option>心理</option><option>財務</option><option>健康</option><option>學習</option><option>設計</option><option>其他</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-bottom:20px">
+      <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:5px;letter-spacing:0.5px">封面圖檔名（covers/ 資料夾）</label>
+      <input id="be-cover" type="text" placeholder="書名.jpg" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;padding:8px 10px;outline:none">
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="closeBookEdit()" style="padding:9px 18px;background:transparent;border:1px solid var(--border);border-radius:var(--radius);color:var(--text-muted);font-family:inherit;font-size:13px;cursor:pointer">取消</button>
+      <button onclick="saveBookEntry()" style="padding:9px 20px;background:var(--accent);border:none;border-radius:var(--radius);color:#141210;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer">儲存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== BOOKS CRUD =====
+const BE_ADD_KEY = 'mia_books_additions';
+const BE_DEL_KEY = 'mia_books_deletions';
+const BE_OVR_KEY = 'mia_books_overrides';
+
+(function initBookExtras() {
+  try {
+    const del = new Set(JSON.parse(localStorage.getItem(BE_DEL_KEY) || '[]'));
+    const ovr = JSON.parse(localStorage.getItem(BE_OVR_KEY) || '{}');
+    const add = JSON.parse(localStorage.getItem(BE_ADD_KEY) || '[]');
+    for (let i = books.length - 1; i >= 0; i--) {
+      if (del.has(books[i].id)) books.splice(i, 1);
+    }
+    books.forEach(b => { if (ovr[b.id]) Object.assign(b, ovr[b.id]); });
+    add.forEach(b => { if (!books.find(x => x.id === b.id)) books.push(b); });
+    updateStats(); render();
+  } catch(e) {}
+})();
+
+function getBookNextId() {
+  return books.length ? Math.max(...books.map(b => b.id)) + 1 : 700;
+}
+
+let beEditingId = null;
+
+function openAddBookModal() {
+  beEditingId = null;
+  document.getElementById('be-modal-title').textContent = '新增書籍';
+  ['be-title','be-author','be-cover'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('be-type').value = '自我成長';
+  document.getElementById('book-edit-overlay').style.display = 'flex';
+}
+
+function openEditBook(id) {
+  if (!id) return;
+  const b = books.find(x => x.id === id);
+  if (!b) return;
+  beEditingId = id;
+  closeModalBtn();
+  document.getElementById('be-modal-title').textContent = '編輯書籍';
+  document.getElementById('be-title').value  = b.title || '';
+  document.getElementById('be-author').value = b.author || '';
+  document.getElementById('be-type').value   = b.type || '自我成長';
+  document.getElementById('be-cover').value  = b.cover || '';
+  document.getElementById('book-edit-overlay').style.display = 'flex';
+}
+
+function closeBookEdit() {
+  document.getElementById('book-edit-overlay').style.display = 'none';
+}
+
+function saveBookEntry() {
+  const title = document.getElementById('be-title').value.trim();
+  if (!title) { alert('請輸入書名'); return; }
+  const entry = {
+    title,
+    short:  title,
+    author: document.getElementById('be-author').value.trim() || '',
+    type:   document.getElementById('be-type').value,
+    cover:  document.getElementById('be-cover').value.trim() || '',
+  };
+  if (beEditingId) {
+    const b = books.find(x => x.id === beEditingId);
+    if (b) Object.assign(b, entry);
+    const ovr = JSON.parse(localStorage.getItem(BE_OVR_KEY) || '{}');
+    ovr[beEditingId] = { ...ovr[beEditingId], ...entry };
+    localStorage.setItem(BE_OVR_KEY, JSON.stringify(ovr));
+  } else {
+    const newId = getBookNextId();
+    const newBook = { id: newId, ...entry };
+    books.push(newBook);
+    const add = JSON.parse(localStorage.getItem(BE_ADD_KEY) || '[]');
+    add.push(newBook);
+    localStorage.setItem(BE_ADD_KEY, JSON.stringify(add));
+  }
+  closeBookEdit();
+  closeModalBtn();
+  updateStats(); render();
+}
+
+function deleteBook(id) {
+  if (!id) return;
+  const b = books.find(x => x.id === id);
+  if (!b || !confirm(`確定刪除「${b.title}」？`)) return;
+  const idx = books.findIndex(x => x.id === id);
+  if (idx > -1) books.splice(idx, 1);
+  const del = JSON.parse(localStorage.getItem(BE_DEL_KEY) || '[]');
+  if (!del.includes(id)) { del.push(id); localStorage.setItem(BE_DEL_KEY, JSON.stringify(del)); }
+  const add = JSON.parse(localStorage.getItem(BE_ADD_KEY) || '[]');
+  localStorage.setItem(BE_ADD_KEY, JSON.stringify(add.filter(x => x.id !== id)));
+  closeModalBtn();
+  updateStats(); render();
+}
 </script>
 </body>
 </html>

@@ -246,6 +246,73 @@
   .status-btn.active[data-status="閱讀中"] { background: #6aade0; color: var(--bg); border-color: #6aade0; }
   .status-btn.active[data-status="已讀完"] { background: #6ac08a; color: var(--bg); border-color: #6ac08a; }
 
+  /* ===== WANT-EBOOK QUEUE ===== */
+  .queue-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(224,168,80,0.35);
+    background: rgba(224,168,80,0.08);
+    color: #e0a850;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .queue-btn:hover { border-color: #e0a850; background: rgba(224,168,80,0.16); }
+  .queue-btn.active { background: #e0a850; color: var(--bg); border-color: #e0a850; font-weight: 500; }
+
+  .queue-panel {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 48px 0;
+  }
+  .queue-section-title {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .queue-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .queue-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px 6px 8px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+    max-width: 320px;
+  }
+  .queue-card:hover { border-color: #e0a850; transform: translateY(-1px); }
+  .queue-card .queue-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .queue-card .queue-dot { width: 7px; height: 7px; border-radius: 50%; background: #e0a850; flex-shrink: 0; }
+  .queue-empty-hint { font-size: 12px; color: var(--text-muted); font-style: italic; margin-bottom: 8px; }
+  .queue-budget-note { font-size: 11px; color: var(--text-muted); margin-bottom: 16px; }
+  .queue-budget-note strong { color: #e0a850; }
+
+  .card-wantebook-flag {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    font-size: 12px;
+    z-index: 3;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.6));
+  }
+
+  .modal-secondary-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .btn-wantebook-toggle {
+    flex: 1; padding: 9px 12px; border-radius: var(--radius);
+    font-family: inherit; font-size: 12px; cursor: pointer; transition: all 0.2s;
+    background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+  }
+  .btn-wantebook-toggle:hover { border-color: #e0a850; color: #e0a850; }
+  .btn-wantebook-toggle.active { background: rgba(224,168,80,0.15); border-color: #e0a850; color: #e0a850; font-weight: 500; }
+
   /* ===== RESULT COUNT ===== */
   .result-info {
     max-width: 1400px;
@@ -936,6 +1003,10 @@
         <div class="stat-num" id="done-count">0</div>
         <div class="stat-label">已讀完</div>
       </div>
+      <div class="stat">
+        <div class="stat-num" id="wantebook-count">0</div>
+        <div class="stat-label">待購電子書</div>
+      </div>
     </div>
   </div>
 </header>
@@ -979,6 +1050,7 @@
         <button class="fmt-btn active" data-fmt="全部">全部格式</button>
         <button class="fmt-btn" data-fmt="電子書">📱 電子書</button>
         <button class="fmt-btn" data-fmt="實體書">📗 實體書</button>
+        <button class="queue-btn" id="queue-filter-btn" onclick="toggleQueueFilter()">🛒 待購清單</button>
       </div>
     </div>
   </div>
@@ -988,6 +1060,13 @@
 <div class="result-info" id="result-info">
   <div>顯示 <span id="showing-count">638</span> 本</div>
   <button class="sort-btn" id="sort-btn" onclick="toggleSort()">↕ 最新優先</button>
+</div>
+
+<!-- WANT-EBOOK QUEUE PANEL -->
+<div class="queue-panel" id="queue-panel">
+  <div class="queue-section-title">待購電子書清單</div>
+  <div class="queue-row" id="wantebook-row"></div>
+  <div class="queue-budget-note" id="queue-budget-note"></div>
 </div>
 
 <!-- GRID -->
@@ -1052,6 +1131,9 @@
       <div class="modal-format" id="modal-format">
         <button class="format-btn" data-f="實體書" onclick="setFormat(this)">📗 實體書</button>
         <button class="format-btn" data-f="電子書" onclick="setFormat(this)">📱 電子書</button>
+      </div>
+      <div class="modal-secondary-actions" id="modal-secondary-actions">
+        <button class="btn-wantebook-toggle" id="btn-wantebook-toggle" onclick="toggleWantEbook()">🛒 加入待購電子書清單</button>
       </div>
       <div class="modal-actions" id="modal-actions">
         <button class="status-select-btn" data-s="待讀" onclick="setStatus(this)">📚 待讀</button>
@@ -1826,7 +1908,8 @@ function render() {
     const matchFormat = currentFormat === '全部' || getFormat(b.id) === currentFormat;
     const q = currentSearch.toLowerCase();
     const matchSearch = !q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q);
-    return matchCat && matchStatus && matchFormat && matchSearch;
+    const matchQueue = !showQueueOnly || getWantEbook(b.id);
+    return matchCat && matchStatus && matchFormat && matchSearch && matchQueue;
   });
 
   if (currentSort === 'stroke') {
@@ -1869,6 +1952,7 @@ function render() {
         </div>
         ${isOwner ? `<div class="status-badge ${s}">${s}</div>` : ''}
         ${isOwner && getFormat(b.id) ? `<div class="card-format ${getFormat(b.id)}">${getFormat(b.id)}</div>` : ''}
+        ${isOwner && getWantEbook(b.id) ? `<div class="card-wantebook-flag" title="待購電子書">🛒</div>` : ''}
       </div>
       <div class="book-type">
         <span class="type-tag">${b.type}</span>
@@ -1880,15 +1964,19 @@ function render() {
     card.addEventListener('click', () => openModal(b));
     grid.appendChild(card);
   });
+
+  renderQueuePanel();
 }
 
 function updateStats() {
   const total = books.length;
   const reading = books.filter(b => getStatus(b.id) === '閱讀中').length;
   const done = books.filter(b => getStatus(b.id) === '已讀完').length;
+  const wantebook = books.filter(b => getWantEbook(b.id)).length;
   document.getElementById('total-count').textContent = total;
   document.getElementById('reading-count').textContent = reading;
   document.getElementById('done-count').textContent = done;
+  document.getElementById('wantebook-count').textContent = wantebook;
 }
 
 // Filter
@@ -1944,6 +2032,10 @@ function openModal(b) {
   document.getElementById('modal-actions').style.display = isOwner ? '' : 'none';
   document.getElementById('modal-format').style.display = isOwner ? '' : 'none';
   if (isOwner) updateFormatBtns(getFormat(b.id));
+
+  document.getElementById('modal-secondary-actions').style.display = (isOwner && getFormat(b.id) === '實體書') ? '' : 'none';
+  document.getElementById('btn-wantebook-toggle').classList.toggle('active', getWantEbook(b.id));
+  document.getElementById('btn-wantebook-toggle').textContent = getWantEbook(b.id) ? '🛒 已在待購清單中' : '🛒 加入待購電子書清單';
 
   if (isOwner) {
     // Update date display
@@ -2016,8 +2108,14 @@ function setFormat(btn) {
   } else {
     prev.format = prev.format === f ? '電子書' : f;
   }
+  // 買了電子版，自動從待購清單移除
+  if (getFormat(id) === '電子書' && getWantEbook(id)) setWantEbook(id, false);
   storageSet(statusMap);
   updateFormatBtns(getFormat(id));
+  document.getElementById('btn-wantebook-toggle').style.display = getFormat(id) === '實體書' ? '' : 'none';
+  document.getElementById('btn-wantebook-toggle').classList.toggle('active', getWantEbook(id));
+  document.getElementById('btn-wantebook-toggle').textContent = getWantEbook(id) ? '🛒 已在待購清單中' : '🛒 加入待購電子書清單';
+  updateStats();
   render();
 }
 
@@ -2031,6 +2129,56 @@ function getNotes(id) {
   const entry = statusMap[id];
   if (!entry || typeof entry === 'string') return '';
   return entry.notes || '';
+}
+
+// ===== 待購電子書清單 =====
+const MONTHLY_BUY_BUDGET = 5;
+function getWantEbook(id) {
+  const entry = statusMap[id];
+  return !!(entry && typeof entry === 'object' && entry.wantEbook);
+}
+function setWantEbook(id, val) {
+  const prev = statusMap[id];
+  const prevData = (typeof prev === 'object' && prev) ? prev : { status: typeof prev === 'string' ? prev : '待讀' };
+  statusMap[id] = { ...prevData, wantEbook: val };
+  storageSet(statusMap);
+}
+function toggleWantEbook() {
+  if (!currentModal) return;
+  const id = currentModal.id;
+  setWantEbook(id, !getWantEbook(id));
+  updateStats();
+  render();
+  openModal(currentModal);
+}
+let showQueueOnly = false;
+function toggleQueueFilter() {
+  showQueueOnly = !showQueueOnly;
+  document.getElementById('queue-filter-btn').classList.toggle('active', showQueueOnly);
+  render();
+}
+function renderQueuePanel() {
+  const panel = document.getElementById('queue-panel');
+  document.getElementById('queue-filter-btn').style.display = isOwner ? '' : 'none';
+  if (!isOwner) { panel.style.display = 'none'; return; }
+  panel.style.display = '';
+  const row = document.getElementById('wantebook-row');
+  const note = document.getElementById('queue-budget-note');
+  const queued = books.filter(b => getWantEbook(b.id));
+  row.innerHTML = queued.length
+    ? queued.map(b => `
+        <div class="queue-card" onclick='openModalById(${b.id})'>
+          <span class="queue-dot"></span>
+          <span class="queue-title">${b.title}</span>
+        </div>`).join('')
+    : `<div class="queue-empty-hint">還沒有排進待購清單，在書籍卡片點「🛒 加入待購電子書清單」開始累積</div>`;
+  note.innerHTML = queued.length
+    ? `目前清單共 <strong>${queued.length}</strong> 本，每月預算買 <strong>${MONTHLY_BUY_BUDGET}</strong> 本，買完記得把格式切成「電子書」，會自動從清單移除`
+    : '';
+}
+function openModalById(id) {
+  const b = books.find(x => x.id === id);
+  if (b) openModal(b);
 }
 
 let _notesSaveTimer = null;

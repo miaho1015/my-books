@@ -2033,7 +2033,7 @@ function openModal(b) {
   document.getElementById('modal-format').style.display = isOwner ? '' : 'none';
   if (isOwner) updateFormatBtns(getFormat(b.id));
 
-  document.getElementById('modal-secondary-actions').style.display = (isOwner && getFormat(b.id) === '實體書') ? '' : 'none';
+  document.getElementById('modal-secondary-actions').style.display = isOwner ? '' : 'none';
   document.getElementById('btn-wantebook-toggle').classList.toggle('active', getWantEbook(b.id));
   document.getElementById('btn-wantebook-toggle').textContent = getWantEbook(b.id) ? '🛒 已在待購清單中' : '🛒 加入待購電子書清單';
 
@@ -2112,7 +2112,6 @@ function setFormat(btn) {
   if (getFormat(id) === '電子書' && getWantEbook(id)) setWantEbook(id, false);
   storageSet(statusMap);
   updateFormatBtns(getFormat(id));
-  document.getElementById('btn-wantebook-toggle').style.display = getFormat(id) === '實體書' ? '' : 'none';
   document.getElementById('btn-wantebook-toggle').classList.toggle('active', getWantEbook(id));
   document.getElementById('btn-wantebook-toggle').textContent = getWantEbook(id) ? '🛒 已在待購清單中' : '🛒 加入待購電子書清單';
   updateStats();
